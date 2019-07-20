@@ -4,11 +4,11 @@
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="referrer" content="no-referrer">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="css/university.css">
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <script src="js/bootstrap.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/university.css">
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -20,11 +20,13 @@
             <div class="media" th:each="question:${pagination.questionDTOList}">
                 <div class="media-left">
                     <a href="#">
-                        <img class="media-object" src="https://avatars1.githubusercontent.com/u/28011509?v=4">
+                        <img class="media-object" th:src="${question.user.avatarUrl}">
                     </a>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading" th:text="${question.title}">标题</h4>
+                    <h4 class="media-heading" >
+                        <a th:text="${question.title}"th:href="@{'/question/'+${question.id}}"></a>
+                    </h4>
                     <span class="text-decription">
                         <span th:text="${question.likeCount}"></span> 关注·
                         <span th:text="${question.commentCount}"></span> 回复·
@@ -33,7 +35,7 @@
                 </div>
             </div>
             <nav aria-label="Page navigation">
-                <ul class="pagination">
+                <ul class="pagination" th:if="${pagination.totalPage} > 0">
                     <li th:if="${pagination.currentPage > 4} ">
                         <a href="#" aria-label="Previous" th:href="@{/(currentPage=1)}">
                             <span aria-hidden="true">&lt;&lt;</span>
@@ -44,8 +46,6 @@
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
-
-
 
                     <li th:if="${pagination.totalPage<7}"
                         th:each="pageNo : ${#numbers.sequence(1, pagination.totalPage)}"

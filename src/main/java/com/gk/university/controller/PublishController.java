@@ -40,30 +40,21 @@ public class PublishController {
 
         if(title == null || title.equals("")){
             model.addAttribute("error","标题不能为空");
-            return "/publish";
+            return "publish";
         }
         if(description == null || description.equals("")){
             model.addAttribute("error","内容不能为空");
-            return "/publish";
+            return "publish";
         }
         if(tag == null || tag.equals("")){
             model.addAttribute("error","标签不能为空");
-            return "/publish";
+            return "publish";
         }
 
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("token")) {
-                String token = cookie.getValue();
-                user = userMapper.findByToken(token);
-                request.getSession().setAttribute("user", user);
-                break;
-            }
-        }
-
+        User user = (User) request.getSession().getAttribute("user");
         if(user == null){
             model.addAttribute("error","用户未登录");
+            return "publish";
         }
 
         Question question = new Question();

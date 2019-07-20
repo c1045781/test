@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PageInationDTO {
+public class PaginationDTO {
     private List<QuestionDTO> questionDTOList;
     private Integer currentPage;
     private Integer size;

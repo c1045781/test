@@ -17,6 +17,7 @@
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发布</h2>
             <span role="separator" class="divider"></span>
             <form action="/publish" method="post">
+                <input type="hidden" name="id" id="id" th:value="${id}">
                 <div class="form-group">
                     <label for="title">问题标题</label>
                     <!--/*@thymesVar id="title" type="java"*/-->

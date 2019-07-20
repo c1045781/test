@@ -36,7 +36,7 @@ public class ProfileController {
         if ("question".equals(action)) {
             model.addAttribute("section", "question");
             model.addAttribute("sectionName", "我的提问");
-            PaginationDTO paginationDTO = questionService.list(user.getId(), currentPage, size);
+            PaginationDTO paginationDTO = questionService.findPaginationById(user.getId(), currentPage, size);
             model.addAttribute("pagination", paginationDTO);
         } else if ("replie".equals(action)) {
             model.addAttribute("section", "replie");

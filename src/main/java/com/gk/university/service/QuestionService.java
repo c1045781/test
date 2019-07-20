@@ -20,7 +20,7 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public PaginationDTO list(Integer currentPage, Integer size) {
+    public PaginationDTO findPagination(Integer currentPage, Integer size) {
 
         PaginationDTO pageInationDTO = new PaginationDTO();
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
@@ -51,7 +51,7 @@ public class QuestionService {
         return pageInationDTO;
     }
 
-    public PaginationDTO list(Integer userId, Integer currentPage, Integer size) {
+    public PaginationDTO findPaginationById(Integer userId, Integer currentPage, Integer size) {
 
         PaginationDTO pageInationDTO = new PaginationDTO();
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
@@ -85,13 +85,27 @@ public class QuestionService {
         return pageInationDTO;
     }
 
-    public QuestionDTO list(Integer id) {
-        Question question = questionMapper.listById(id);
+    public QuestionDTO findQuestionById(Integer id) {
+        Question question = questionMapper.questionById(id);
         QuestionDTO target = new QuestionDTO();
         BeanUtils.copyProperties(question, target);
         User user = userMapper.findById(question.getCreator());
         target.setUser(user);
         return target;
 
+    }
+
+    public void insertOrUpdateQuestion(Question question) {
+        Question dbQuestion = questionMapper.questionById(question.getId());
+        if(dbQuestion == null){
+            //插入
+            question.setGmtCreate(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreate());
+            questionMapper.insertQuestion(question);
+        }else{
+            //更新
+            question.setGmtModified(System.currentTimeMillis());
+            questionMapper.updateQuestion(question);
+        }
     }
 }

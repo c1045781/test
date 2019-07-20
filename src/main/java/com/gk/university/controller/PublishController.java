@@ -1,27 +1,38 @@
 package com.gk.university.controller;
 
+import com.gk.university.dto.QuestionDTO;
 import com.gk.university.mapper.QuestionMapper;
-import com.gk.university.mapper.UserMapper;
 import com.gk.university.model.Question;
 import com.gk.university.model.User;
+import com.gk.university.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class PublishController {
 
     @Autowired
-    private UserMapper userMapper;
+    private QuestionService questionService;
 
     @Autowired
     private QuestionMapper questionMapper;
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable("id")Integer id,Model model){
+        QuestionDTO questionDTO = questionService.findQuestionById(id);
+        model.addAttribute("title",questionDTO.getTitle());
+        model.addAttribute("description",questionDTO.getDescription());
+        model.addAttribute("tag",questionDTO.getTag());
+        model.addAttribute("id",questionDTO.getId());
+        return "publish";
+    }
 
     @GetMapping("/publish")
     public String publish(){
@@ -33,6 +44,7 @@ public class PublishController {
     public String doPublish(@RequestParam("title") String title,
                             @RequestParam("description") String description,
                             @RequestParam("tag") String tag, Model model,
+                            @RequestParam("id")Integer id,
                             HttpServletRequest request){
         model.addAttribute("title",title);
         model.addAttribute("description",description);
@@ -60,11 +72,10 @@ public class PublishController {
         Question question = new Question();
         question.setTitle(title);
         question.setTag(tag);
+        question.setId(id);
         question.setDescription(description);
         question.setCreator(user.getId());
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(question.getGmtCreate());
-        questionMapper.insertQuestion(question);
+        questionService.insertOrUpdateQuestion(question);
         return "redirect:/";
     }
 }

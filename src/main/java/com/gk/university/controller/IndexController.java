@@ -1,15 +1,12 @@
 package com.gk.university.controller;
 
 import com.gk.university.dto.PaginationDTO;
-import com.gk.university.mapper.UserMapper;
 import com.gk.university.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class IndexController {
@@ -22,7 +19,7 @@ public class IndexController {
                         @RequestParam(value = "currentPage" ,defaultValue = "1")Integer currentPage,
                         @RequestParam(value = "size" ,defaultValue = "5")Integer size) {
 
-        PaginationDTO pagInationDTO = questionService.list(currentPage,size);
+        PaginationDTO pagInationDTO = questionService.findPagination(currentPage,size);
         model.addAttribute("pagination",pagInationDTO);
         return "index";
     }

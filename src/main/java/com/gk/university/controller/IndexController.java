@@ -16,11 +16,11 @@ public class IndexController {
 
     @GetMapping("/")
     public String hello(Model model,
-                        @RequestParam(value = "currentPage" ,defaultValue = "1")Integer currentPage,
-                        @RequestParam(value = "size" ,defaultValue = "5")Integer size) {
+                        @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                        @RequestParam(value = "size", defaultValue = "5") Integer size) {
 
-        PaginationDTO pagInationDTO = questionService.findPagination(currentPage,size);
-        model.addAttribute("pagination",pagInationDTO);
+        PaginationDTO pagInationDTO = questionService.findPagination(currentPage, size);
+        model.addAttribute("pagination", pagInationDTO);
         return "index";
     }
 }

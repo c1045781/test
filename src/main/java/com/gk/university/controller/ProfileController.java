@@ -22,15 +22,15 @@ public class ProfileController {
     private UserMapper userMapper;
 
     @GetMapping("/profile/{action}")
-    public String profile(@PathVariable("action")String action,
+    public String profile(@PathVariable("action") String action,
                           Model model,
-                          @RequestParam(value = "currentPage", defaultValue="1")Integer currentPage,
-                          @RequestParam(value = "size", defaultValue = "5")Integer size,
-                          HttpServletRequest request){
+                          @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+                          @RequestParam(value = "size", defaultValue = "5") Integer size,
+                          HttpServletRequest request) {
 
         User user = (User) request.getSession().getAttribute("user");
-        if(user == null){
-            model.addAttribute("error","用户未登录");
+        if (user == null) {
+            model.addAttribute("error", "用户未登录");
             return "redirect:/";
         }
         if ("question".equals(action)) {

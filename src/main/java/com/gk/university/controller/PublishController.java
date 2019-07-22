@@ -25,17 +25,17 @@ public class PublishController {
     private QuestionMapper questionMapper;
 
     @GetMapping("/publish/{id}")
-    public String edit(@PathVariable("id")Integer id,Model model){
+    public String edit(@PathVariable("id") Long id, Model model) {
         QuestionDTO questionDTO = questionService.findQuestionById(id);
-        model.addAttribute("title",questionDTO.getTitle());
-        model.addAttribute("description",questionDTO.getDescription());
-        model.addAttribute("tag",questionDTO.getTag());
-        model.addAttribute("id",questionDTO.getId());
+        model.addAttribute("title", questionDTO.getTitle());
+        model.addAttribute("description", questionDTO.getDescription());
+        model.addAttribute("tag", questionDTO.getTag());
+        model.addAttribute("id", questionDTO.getId());
         return "publish";
     }
 
     @GetMapping("/publish")
-    public String publish(){
+    public String publish() {
 
         return "publish";
     }
@@ -44,28 +44,28 @@ public class PublishController {
     public String doPublish(@RequestParam("title") String title,
                             @RequestParam("description") String description,
                             @RequestParam("tag") String tag, Model model,
-                            @RequestParam("id")Integer id,
-                            HttpServletRequest request){
-        model.addAttribute("title",title);
-        model.addAttribute("description",description);
-        model.addAttribute("tag",tag);
+                            @RequestParam("id") Long id,
+                            HttpServletRequest request) {
+        model.addAttribute("title", title);
+        model.addAttribute("description", description);
+        model.addAttribute("tag", tag);
 
-        if(title == null || title.equals("")){
-            model.addAttribute("error","标题不能为空");
+        if (title == null || title.equals("")) {
+            model.addAttribute("error", "标题不能为空");
             return "publish";
         }
-        if(description == null || description.equals("")){
-            model.addAttribute("error","内容不能为空");
+        if (description == null || description.equals("")) {
+            model.addAttribute("error", "内容不能为空");
             return "publish";
         }
-        if(tag == null || tag.equals("")){
-            model.addAttribute("error","标签不能为空");
+        if (tag == null || tag.equals("")) {
+            model.addAttribute("error", "标签不能为空");
             return "publish";
         }
 
         User user = (User) request.getSession().getAttribute("user");
-        if(user == null){
-            model.addAttribute("error","用户未登录");
+        if (user == null) {
+            model.addAttribute("error", "用户未登录");
             return "publish";
         }
 

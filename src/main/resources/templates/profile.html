@@ -17,22 +17,24 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h2 th:text="${sectionName}"></h2>
             <hr>
-            <div  th:if="${pagination.questionDTOList} != null">
-            <div class="media" th:each="question:${pagination.questionDTOList}">
-                <div class="media-left">
-                    <a href="#">
-                        <img class="media-object" src="https://avatars1.githubusercontent.com/u/28011509?v=4">
-                    </a>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading" th:text="${question.title}"></h4>
-                    <span class="text-decription">
+            <div th:if="${pagination.questionDTOList} != null">
+                <div class="media" th:each="question:${pagination.questionDTOList}">
+                    <div class="media-left">
+                        <a th:href="@{'/question/'+${question.id}}">
+                            <img class="media-object" th:src="${question.user.avatarUrl}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4>
+                            <a class="media-heading" th:text="${question.title}"
+                               th:href="@{'/question/'+${question.id}}"></a></h4>
+                        <span class="text-decription">
                         <span th:text="${question.likeCount}"></span> 关注·
                         <span th:text="${question.commentCount}"></span> 回复·
                         <span th:text="${question.viewCount}"></span> 浏览·
                         <span th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm:ss')}"></span></span>
+                    </div>
                 </div>
-            </div>
             </div>
             <nav aria-label="Page navigation">
                 <ul class="pagination" th:if="${pagination.totalPage} != 0">
@@ -42,11 +44,11 @@
                         </a>
                     </li>
                     <li th:if="${pagination.currentPage != 1} ">
-                        <a href="#" aria-label="Previous" th:href="@{'/profile/'+${section}(currentPage=${pagination.currentPage-1})}">
+                        <a href="#" aria-label="Previous"
+                           th:href="@{'/profile/'+${section}(currentPage=${pagination.currentPage-1})}">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
-
 
 
                     <li th:if="${pagination.totalPage<7}"
@@ -72,12 +74,14 @@
                     </li>
 
                     <li th:if="${pagination.currentPage != pagination.totalPage} ">
-                        <a href="#" aria-label="Next" th:href="@{'/profile/'+${section}(currentPage=${pagination.currentPage+1})}">
+                        <a href="#" aria-label="Next"
+                           th:href="@{'/profile/'+${section}(currentPage=${pagination.currentPage+1})}">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>
                     <li th:if="${pagination.currentPage+3 < pagination.totalPage} ">
-                        <a href="#" aria-label="Next" th:href="@{'/profile/'+${section}(currentPage=${pagination.totalPage})}">
+                        <a href="#" aria-label="Next"
+                           th:href="@{'/profile/'+${section}(currentPage=${pagination.totalPage})}">
                             <span aria-hidden="true">&gt;&gt;</span>
                         </a>
                     </li>

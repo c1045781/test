@@ -24,8 +24,8 @@
                     </a>
                 </div>
                 <div class="media-body">
-                    <h4 class="media-heading" >
-                        <a th:text="${question.title}"th:href="@{'/question/'+${question.id}}"></a>
+                    <h4 class="media-heading">
+                        <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
                     </h4>
                     <span class="text-decription">
                         <span th:text="${question.likeCount}"></span> 关注·
@@ -68,8 +68,6 @@
                         th:class="${pagination.currentPage == pageNo}?'active'">
                         <a href="#" th:text="${pageNo}" th:href="@{/(currentPage=${pageNo})}"></a>
                     </li>
-
-
 
 
                     <li th:if="${pagination.currentPage != pagination.totalPage} ">

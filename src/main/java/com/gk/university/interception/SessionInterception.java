@@ -2,6 +2,7 @@ package com.gk.university.interception;
 
 import com.gk.university.mapper.UserMapper;
 import com.gk.university.model.User;
+import com.gk.university.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -10,20 +11,26 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Service
 public class SessionInterception implements HandlerInterceptor {
     @Autowired
     private UserMapper userMapper;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("token")) {
                     String token = cookie.getValue();
-                    User user = userMapper.findByToken(token);
-                    request.getSession().setAttribute("user", user);
+                    UserExample example = new UserExample();
+                    example.createCriteria().andTokenEqualTo(token);
+                    List<User> users = userMapper.selectByExample(example);
+                    if (users.size() > 0) {
+                        request.getSession().setAttribute("user", users.get(0));
+                    }
                     break;
                 }
             }

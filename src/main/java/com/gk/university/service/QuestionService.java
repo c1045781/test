@@ -2,10 +2,14 @@ package com.gk.university.service;
 
 import com.gk.university.dto.PaginationDTO;
 import com.gk.university.dto.QuestionDTO;
+import com.gk.university.exception.CustomizeErrorCode;
+import com.gk.university.exception.CustomizeException;
 import com.gk.university.mapper.QuestionMapper;
 import com.gk.university.mapper.UserMapper;
 import com.gk.university.model.Question;
+import com.gk.university.model.QuestionExample;
 import com.gk.university.model.User;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +28,13 @@ public class QuestionService {
 
         PaginationDTO pageInationDTO = new PaginationDTO();
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
-        Integer index = (currentPage-1)*size;
-        List<Question> questionList = questionMapper.list(index,size);
+        Integer index = (currentPage - 1) * size;
+        QuestionExample example = new QuestionExample();
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(index, size));
         for (Question question : questionList) {
             QuestionDTO target = new QuestionDTO();
             BeanUtils.copyProperties(question, target);
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
             target.setUser(user);
             questionDTOList.add(target);
         }
@@ -37,14 +42,14 @@ public class QuestionService {
         pageInationDTO.setCurrentPage(currentPage);
         pageInationDTO.setSize(size);
 
-        Integer totalCount = questionMapper.count();
+        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
         pageInationDTO.setTotalCount(totalCount);
 
         Integer totalPage;
-        if(totalCount%size == 0) {
-            totalPage = totalCount/size;
-        }else{
-            totalPage = (totalCount/size)+1;
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = (totalCount / size) + 1;
         }
 
         pageInationDTO.setTotalPage(totalPage);
@@ -55,15 +60,17 @@ public class QuestionService {
 
         PaginationDTO pageInationDTO = new PaginationDTO();
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
-        if(currentPage<0){
-            currentPage=1;
+        if (currentPage < 0) {
+            currentPage = 1;
         }
-        Integer index = (currentPage-1)*size;
-        List<Question> questionList = questionMapper.listByUser(userId,index,size);
+        Integer index = (currentPage - 1) * size;
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andCreatorEqualTo(userId);
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(index, size));
         for (Question question : questionList) {
             QuestionDTO target = new QuestionDTO();
             BeanUtils.copyProperties(question, target);
-            User user = userMapper.findById(question.getCreator());
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
             target.setUser(user);
             questionDTOList.add(target);
         }
@@ -71,41 +78,49 @@ public class QuestionService {
         pageInationDTO.setCurrentPage(currentPage);
         pageInationDTO.setSize(size);
 
-        Integer totalCount = questionMapper.countByUser(userId);
+        QuestionExample example1 = new QuestionExample();
+        example1.createCriteria().andCreatorEqualTo(userId);
+        Integer totalCount = (int) questionMapper.countByExample(example1);
         pageInationDTO.setTotalCount(totalCount);
 
         Integer totalPage;
-        if(totalCount%size == 0) {
-            totalPage = totalCount/size;
-        }else{
-            totalPage = (totalCount/size)+1;
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = (totalCount / size) + 1;
         }
 
         pageInationDTO.setTotalPage(totalPage);
         return pageInationDTO;
     }
 
-    public QuestionDTO findQuestionById(Integer id) {
-        Question question = questionMapper.questionById(id);
+    public QuestionDTO findQuestionById(Long id) {
+        Question question = questionMapper.selectByPrimaryKey(id);
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO target = new QuestionDTO();
         BeanUtils.copyProperties(question, target);
-        User user = userMapper.findById(question.getCreator());
+        User user = userMapper.selectByPrimaryKey(question.getCreator());
         target.setUser(user);
         return target;
 
     }
 
     public void insertOrUpdateQuestion(Question question) {
-        Question dbQuestion = questionMapper.questionById(question.getId());
-        if(dbQuestion == null){
+        Question dbQuestion = questionMapper.selectByPrimaryKey(question.getId());
+        if (dbQuestion == null) {
             //插入
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.insertQuestion(question);
-        }else{
+            questionMapper.insert(question);
+        } else {
             //更新
             question.setGmtModified(System.currentTimeMillis());
-            questionMapper.updateQuestion(question);
+            int row = questionMapper.updateByPrimaryKeySelective(question);
+            if (row == 0) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
     }
 }

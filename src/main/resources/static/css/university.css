@@ -1,30 +1,31 @@
-body{
+body {
     background-color: #efefef;
 }
-.main{
+
+.main {
     margin-left: 50px;
     margin-right: 50px;
     margin-bottom: 30px;
     background-color: white;
 }
 
-.btn-publish{
+.btn-publish {
     float: right;
     margin-bottom: 15px;
 }
 
-.media-object{
+.media-object {
     height: 40px;
     width: 40px;
 }
 
-.text-decription{
+.text-decription {
     font-size: 12px;
     font-weight: normal;
     color: #999;
 }
 
-.question-text{
+.question-text {
     color: #9A9A9A;
     font-size: 12px;
 }

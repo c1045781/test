@@ -11,6 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
     private SessionInterception sessionInterception;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(sessionInterception).addPathPatterns("/**");

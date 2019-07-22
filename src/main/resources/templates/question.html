@@ -23,13 +23,15 @@
             <hr>
             <span th:text="${question.description}"></span>
             <hr>
-            <a th:href="@{'/publish/'+${question.id}}" th:if="${session.user != null && session.user.id == question.creator}"><span class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span></a>
+            <a th:href="@{'/publish/'+${question.id}}"
+               th:if="${session.user != null && session.user.id == question.creator}"><span
+                    class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span></a>
         </div>
         <div class="col-lg-3  col-md-12 col-sm-12 col-xs-12">
             <h4>发起人</h4>
             <div class="media">
                 <div class="media-left">
-                        <img class="media-object" th:src="${question.user.avatarUrl}">
+                    <img class="media-object" th:src="${question.user.avatarUrl}">
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading" th:text="${question.user.name}"></h4>

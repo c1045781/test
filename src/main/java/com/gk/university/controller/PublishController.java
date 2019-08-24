@@ -1,10 +1,13 @@
 package com.gk.university.controller;
 
+import com.gk.university.cache.TagCache;
 import com.gk.university.dto.QuestionDTO;
+import com.gk.university.dto.TagDTO;
 import com.gk.university.mapper.QuestionMapper;
 import com.gk.university.model.Question;
 import com.gk.university.model.User;
 import com.gk.university.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,12 +34,13 @@ public class PublishController {
         model.addAttribute("description", questionDTO.getDescription());
         model.addAttribute("tag", questionDTO.getTag());
         model.addAttribute("id", questionDTO.getId());
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
     @GetMapping("/publish")
-    public String publish() {
-
+    public String publish(Model model) {
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
@@ -49,6 +53,7 @@ public class PublishController {
         model.addAttribute("title", title);
         model.addAttribute("description", description);
         model.addAttribute("tag", tag);
+        model.addAttribute("tags", TagCache.get());
 
         if (title == null || title.equals("")) {
             model.addAttribute("error", "标题不能为空");
@@ -63,6 +68,12 @@ public class PublishController {
             return "publish";
         }
 
+        String filterInvalid = TagCache.filterInvalid(tag);
+        if (StringUtils.isNotBlank(filterInvalid)) {
+            model.addAttribute("error", "标签格式错误" + filterInvalid);
+            return "publish";
+        }
+
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             model.addAttribute("error", "用户未登录");
@@ -73,6 +84,9 @@ public class PublishController {
         question.setTitle(title);
         question.setTag(tag);
         question.setId(id);
+        question.setCommentCount(0);
+        question.setViewCount(0);
+        question.setLikeCount(0);
         question.setDescription(description);
         question.setCreator(user.getId());
         questionService.insertOrUpdateQuestion(question);

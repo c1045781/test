@@ -11,18 +11,21 @@
                 <a class="navbar-brand" href="/">个人中心</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <form class="navbar-form navbar-left">
+                <form action="/" class="navbar-form navbar-left">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="问题搜索">
+                        <input type="text" id="search" name="search" class="form-control" placeholder="问题搜索" th:value="${search}">
                     </div>
                     <button type="submit" class="btn btn-default">搜索</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li th:if="${session.user != null }">
-                        <a href="/publish">发布</a>
-                    </li>
                     <li th:if="${session.user == null}">
                         <a href="https://github.com/login/oauth/authorize?client_id=d87b2b59752a3f484ac6&scope=user&redirect_uri=http://localhost:8080/callback&state=1">登录</a>
+                    </li>
+                    <li class="dropdown" th:if="${session.user != null }">
+                        <a href="/publish">发布</a>
+                    </li>
+                    <li class="dropdown" th:if="${session.user != null }">
+                        <a href="/profile/reply">消息 <span class="badge" th:text="${session.unreadCount}"></span></a>
                     </li>
                     <li class="dropdown" th:if="${session.user != null }">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -30,8 +33,8 @@
                             <span th:text="${ session.user.getName() }"></span>
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="/profile/question">消息</a></li>
-                            <li><a href="/profile/replie">个人中心</a></li>
+                            <li><a href="/profile/question">我的问题</a></li>
+                            <li><a href="/profile/replie">我的消息</a></li>
                             <li><a href="/logout">退出</a></li>
                         </ul>
                     </li>

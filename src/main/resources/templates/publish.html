@@ -6,8 +6,11 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/university.css">
+    <link rel="stylesheet" href="/css/editormd.min.css"/>
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.js" type="application/javascript"></script>
+    <script src="/js/university.js" type="application/javascript"></script>
+    <script src="/js/editormd.min.js"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -26,18 +29,61 @@
                 </div>
                 <div class="form-group">
                     <label for="title">内容</label>
-                    <!--/*@thymesVar id="description" type="java"*/-->
-                    <textarea class="form-control" th:text="${description}" id="description" name="description"
-                              rows="12"></textarea>
+                    <div id="publish-editor">
+                        <textarea style="display:none;" name="description" id="description"></textarea>
+                    </div>
+                    <script type="text/javascript">
+                        $(function () {
+                            var editor = editormd("publish-editor", {
+                                width: "100%",
+                                height: 700,
+                                watch: false,
+                                path: "/js/lib/",
+                                delay: 0,
+                                placeholder: "请输入问题描述",
+                                imageUpload: true,
+                                imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                                imageUploadURL: "/file/image"
+                            });
+                        });
+                    </script>
+                    <!--<textarea class="form-control" th:text="${description}" id="description" name="description"-->
+                    <!--rows="12"></textarea>-->
                 </div>
                 <div class="form-group">
                     <label for="title">标签</label>
                     <!--/*@thymesVar id="tag" type="java"*/-->
-                    <input type="text" th:value="${tag}" name="tag" id="tag" class="form-control" placeholder="问题标签">
+                    <input autocomplete="off" type="text" th:value="${tag}" name="tag" id="tag" class="form-control"
+                           placeholder="问题标签" onclick="showTag()">
                 </div>
                 <!--/*@thymesVar id="error" type="java"*/-->
                 <span style="background-color: red" th:text="${error}"></span>
                 <button type="submit" class="btn btn-success btn-publish">发布</button>
+
+                <div id="selectTag" style="display: none" class="tag-div">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" th:each="selectCategory,selectCategorystate:${tags}"
+                            th:class="${selectCategorystate.first ? 'active':''}">
+                            <a th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab"
+                               data-toggle="tab" th:text="${selectCategory.categoryName}"></a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <span role="tabpanel" class="tab-pane" th:id="${selectCategory.categoryName}"
+                              th:each="selectCategory,selectCategorystate:${tags}"
+                              th:classappend="${selectCategorystate.first ? 'active':''}">
+                             <span class="label label-info" style="margin-right: 10px"
+                                   th:each="selectTag,selectTagstate:${selectCategory.tags}"
+                                   onclick="selectedTag(this)" th:data-tag="${selectTag}">
+                                <span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                                <span th:text="${selectTag}"></span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
             </form>
         </div>
         <div class="col-lg-3  col-md-12 col-sm-12 col-xs-12" style="background-color: #2aabd2">

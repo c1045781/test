@@ -2,13 +2,16 @@ package com.gk.university.service;
 
 import com.gk.university.dto.PaginationDTO;
 import com.gk.university.dto.QuestionDTO;
+import com.gk.university.dto.QuestionQueryDTO;
 import com.gk.university.exception.CustomizeErrorCode;
 import com.gk.university.exception.CustomizeException;
+import com.gk.university.mapper.QuestionExtMapper;
 import com.gk.university.mapper.QuestionMapper;
 import com.gk.university.mapper.UserMapper;
 import com.gk.university.model.Question;
 import com.gk.university.model.QuestionExample;
 import com.gk.university.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +26,25 @@ public class QuestionService {
     private QuestionMapper questionMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO findPagination(Integer currentPage, Integer size) {
+    public PaginationDTO findPagination(String search,Integer currentPage, Integer size) {
+        if(StringUtils.isNotBlank(search)) {
+            String[] s = search.split(" ");
+            search = StringUtils.join(s, "|");
+        }
+
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setIndex((currentPage - 1) * size);
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setSearch(search);
+
 
         PaginationDTO pageInationDTO = new PaginationDTO();
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
         Integer index = (currentPage - 1) * size;
-        QuestionExample example = new QuestionExample();
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(index, size));
+        List<Question> questionList = questionExtMapper.selectQuestionBySearch(questionQueryDTO);
         for (Question question : questionList) {
             QuestionDTO target = new QuestionDTO();
             BeanUtils.copyProperties(question, target);
@@ -38,11 +52,13 @@ public class QuestionService {
             target.setUser(user);
             questionDTOList.add(target);
         }
-        pageInationDTO.setQuestionDTOList(questionDTOList);
+        pageInationDTO.setT(questionDTOList);
         pageInationDTO.setCurrentPage(currentPage);
         pageInationDTO.setSize(size);
 
-        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
+
+
+        Integer totalCount = (int) questionExtMapper.countQuestionBySearch(questionQueryDTO);
         pageInationDTO.setTotalCount(totalCount);
 
         Integer totalPage;
@@ -56,9 +72,9 @@ public class QuestionService {
         return pageInationDTO;
     }
 
-    public PaginationDTO findPaginationById(Integer userId, Integer currentPage, Integer size) {
+    public PaginationDTO findPaginationById(Long userId, Integer currentPage, Integer size) {
 
-        PaginationDTO pageInationDTO = new PaginationDTO();
+        PaginationDTO<QuestionDTO> pageInationDTO = new PaginationDTO();
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
         if (currentPage < 0) {
             currentPage = 1;
@@ -74,7 +90,7 @@ public class QuestionService {
             target.setUser(user);
             questionDTOList.add(target);
         }
-        pageInationDTO.setQuestionDTOList(questionDTOList);
+        pageInationDTO.setT(questionDTOList);
         pageInationDTO.setCurrentPage(currentPage);
         pageInationDTO.setSize(size);
 
@@ -122,5 +138,21 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void invcView(Long id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
+    }
+
+    public List<Question> relatedQuestion(QuestionDTO questionDTO) {
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(StringUtils.replace(questionDTO.getTag(),",","|"));
+        List<Question> questionList = questionExtMapper.relatedQuestion(question);
+        return questionList;
+
     }
 }

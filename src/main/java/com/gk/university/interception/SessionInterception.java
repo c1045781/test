@@ -1,8 +1,11 @@
 package com.gk.university.interception;
 
+import com.gk.university.mapper.QuestionMapper;
 import com.gk.university.mapper.UserMapper;
+import com.gk.university.model.QuestionExample;
 import com.gk.university.model.User;
 import com.gk.university.model.UserExample;
+import com.gk.university.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,6 +20,10 @@ import java.util.List;
 public class SessionInterception implements HandlerInterceptor {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private NotificationService notificationService;
+    @Autowired
+    private QuestionMapper questionMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -30,6 +37,12 @@ public class SessionInterception implements HandlerInterceptor {
                     List<User> users = userMapper.selectByExample(example);
                     if (users.size() > 0) {
                         request.getSession().setAttribute("user", users.get(0));
+                        int unreadCount = notificationService.unreadCount(users.get(0).getId());
+                        request.getSession().setAttribute("unreadCount",unreadCount);
+                        QuestionExample example1 = new QuestionExample();
+                        example1.createCriteria().andCreatorEqualTo(users.get(0).getId());
+                        Integer questionCount = (int) questionMapper.countByExample(example1);
+                        request.getSession().setAttribute("questionCount",questionCount);
                     }
                     break;
                 }

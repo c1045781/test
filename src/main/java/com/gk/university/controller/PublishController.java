@@ -3,6 +3,8 @@ package com.gk.university.controller;
 import com.gk.university.cache.TagCache;
 import com.gk.university.dto.QuestionDTO;
 import com.gk.university.dto.TagDTO;
+import com.gk.university.exception.CustomizeErrorCode;
+import com.gk.university.exception.CustomizeException;
 import com.gk.university.mapper.QuestionMapper;
 import com.gk.university.model.Question;
 import com.gk.university.model.User;
@@ -28,8 +30,13 @@ public class PublishController {
     private QuestionMapper questionMapper;
 
     @GetMapping("/publish/{id}")
-    public String edit(@PathVariable("id") Long id, Model model) {
+    public String edit(@PathVariable("id") Long id, Model model,HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+
         QuestionDTO questionDTO = questionService.findQuestionById(id);
+        if(questionDTO.getCreator() != user.getId()){
+            throw new CustomizeException(CustomizeErrorCode.CAN_NOT_EDIT_QUESTION);
+        }
         model.addAttribute("title", questionDTO.getTitle());
         model.addAttribute("description", questionDTO.getDescription());
         model.addAttribute("tag", questionDTO.getTag());

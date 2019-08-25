@@ -18,29 +18,33 @@
         <result column="TAG" jdbcType="VARCHAR" property="tag"/>
     </resultMap>
     <update id="incView" parameterType="com.gk.university.model.Question">
-    update QUESTION
+    update question
     set
     VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
     where id = #{id}
     </update>
 
     <update id="incCommentCount" parameterType="com.gk.university.model.Question">
-    update QUESTION
+    update question
     set
     COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
     where id = #{id}
     </update>
 
     <select id="relatedQuestion" parameterType="com.gk.university.model.Question" resultMap="BaseResultMap">
-        select * from QUESTION where TAG REGEXP #{tag} and id != #{id}
+        select * from question where TAG REGEXP #{tag} and id != #{id}
     </select>
 
 
     <select id="countQuestionBySearch" parameterType="com.gk.university.model.Question" resultType="Integer">
-        select count(*) from QUESTION
+        select count(*) from question
         <where>
             <if test="search != null">
                 and title REGEXP #{search}
+            </if>
+
+            <if test="tag != null">
+                and tag REGEXP #{tag}
             </if>
         </where>
 
@@ -48,10 +52,14 @@
 
     <select id="selectQuestionBySearch" parameterType="com.gk.university.dto.QuestionQueryDTO"
             resultMap="BaseResultMap">
-        select * from QUESTION
+        select * from question
         <where>
             <if test="search != null">
                 and title REGEXP #{search}
+            </if>
+
+            <if test="tag != null">
+                and tag REGEXP #{tag}
             </if>
         </where>
         order by gmt_create desc limit #{index},#{size}

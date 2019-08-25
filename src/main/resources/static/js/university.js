@@ -20,10 +20,11 @@ function comment(content, type, id) {
             "parentId": id
         }),
         success: function (date) {
+            alert(window.location.host)
             if (date.code == 2003) {
                 confirm(date.message);
                 window.localStorage.setItem("closable", true);
-                window.open("https://github.com/login/oauth/authorize?client_id=d87b2b59752a3f484ac6&scope=user&redirect_uri=http://localhost:8080/callback&state=1");
+                window.open("https://github.com/login/oauth/authorize?client_id=d87b2b59752a3f484ac6&scope=user&redirect_uri=http://"+ window.location.host +"/callback&state=1");
             } else if (date.code == 200) {
                 window.location.reload();
             } else {

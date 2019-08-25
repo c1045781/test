@@ -1,5 +1,6 @@
 package com.gk.university.service;
 
+import com.gk.university.dto.HotTagDTO;
 import com.gk.university.dto.PaginationDTO;
 import com.gk.university.dto.QuestionDTO;
 import com.gk.university.dto.QuestionQueryDTO;
@@ -17,8 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class QuestionService {
@@ -29,8 +29,8 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO findPagination(String search,Integer currentPage, Integer size) {
-        if(StringUtils.isNotBlank(search)) {
+    public PaginationDTO findPagination(String tag, String search, Integer currentPage, Integer size) {
+        if (StringUtils.isNotBlank(search)) {
             String[] s = search.split(" ");
             search = StringUtils.join(s, "|");
         }
@@ -39,26 +39,18 @@ public class QuestionService {
         questionQueryDTO.setIndex((currentPage - 1) * size);
         questionQueryDTO.setSize(size);
         questionQueryDTO.setSearch(search);
+        questionQueryDTO.setTag(tag);
 
 
         PaginationDTO pageInationDTO = new PaginationDTO();
-        ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
-        Integer index = (currentPage - 1) * size;
         List<Question> questionList = questionExtMapper.selectQuestionBySearch(questionQueryDTO);
-        for (Question question : questionList) {
-            QuestionDTO target = new QuestionDTO();
-            BeanUtils.copyProperties(question, target);
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            target.setUser(user);
-            questionDTOList.add(target);
-        }
+        List<QuestionDTO> questionDTOList = questionCopyProperties(questionList);
         pageInationDTO.setT(questionDTOList);
         pageInationDTO.setCurrentPage(currentPage);
         pageInationDTO.setSize(size);
 
 
-
-        Integer totalCount = (int) questionExtMapper.countQuestionBySearch(questionQueryDTO);
+        Integer totalCount = questionExtMapper.countQuestionBySearch(questionQueryDTO);
         pageInationDTO.setTotalCount(totalCount);
 
         Integer totalPage;
@@ -75,7 +67,6 @@ public class QuestionService {
     public PaginationDTO findPaginationById(Long userId, Integer currentPage, Integer size) {
 
         PaginationDTO<QuestionDTO> pageInationDTO = new PaginationDTO();
-        ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
         if (currentPage < 0) {
             currentPage = 1;
         }
@@ -83,13 +74,7 @@ public class QuestionService {
         QuestionExample example = new QuestionExample();
         example.createCriteria().andCreatorEqualTo(userId);
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(index, size));
-        for (Question question : questionList) {
-            QuestionDTO target = new QuestionDTO();
-            BeanUtils.copyProperties(question, target);
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            target.setUser(user);
-            questionDTOList.add(target);
-        }
+        List<QuestionDTO> questionDTOList = questionCopyProperties(questionList);
         pageInationDTO.setT(questionDTOList);
         pageInationDTO.setCurrentPage(currentPage);
         pageInationDTO.setSize(size);
@@ -108,6 +93,18 @@ public class QuestionService {
 
         pageInationDTO.setTotalPage(totalPage);
         return pageInationDTO;
+    }
+
+    private List<QuestionDTO> questionCopyProperties(List<Question> questionList) {
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        for (Question question : questionList) {
+            QuestionDTO target = new QuestionDTO();
+            BeanUtils.copyProperties(question, target);
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
+            target.setUser(user);
+            questionDTOList.add(target);
+        }
+        return questionDTOList;
     }
 
     public QuestionDTO findQuestionById(Long id) {
@@ -150,9 +147,51 @@ public class QuestionService {
     public List<Question> relatedQuestion(QuestionDTO questionDTO) {
         Question question = new Question();
         question.setId(questionDTO.getId());
-        question.setTag(StringUtils.replace(questionDTO.getTag(),",","|"));
+        question.setTag(StringUtils.replace(questionDTO.getTag(), ",", "|"));
         List<Question> questionList = questionExtMapper.relatedQuestion(question);
         return questionList;
 
     }
+
+    public List<HotTagDTO> findHotTag() {
+        QuestionExample example = new QuestionExample();
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(0, 5));
+        Map<String, Integer> map = new HashMap<>();
+        for (Question question : questionList) {
+            String[] splits = question.getTag().split(",");
+            for (String tag : splits) {
+                Integer count = map.get(tag);
+                if (count != null) {
+                    map.put(tag, count + 5 + question.getCommentCount());
+                } else {
+                    map.put(tag, 5 + question.getCommentCount());
+                }
+            }
+        }
+
+
+        List<HotTagDTO> hotTags = new ArrayList<>();
+        for (int i = 0; i <= 4; i++) {
+            PriorityQueue<HotTagDTO> priorityQueue = new PriorityQueue<>();
+            map.forEach((key, value) -> {
+                HotTagDTO hotTagDTO = new HotTagDTO();
+                hotTagDTO.setTag(key);
+                hotTagDTO.setCount(value);
+                if (priorityQueue.size() < 10) {
+                    priorityQueue.offer(hotTagDTO);
+                } else {
+                    HotTagDTO poll = priorityQueue.peek();
+                    if (hotTagDTO.compareTo(poll) < 0) {
+                        priorityQueue.poll();
+                        priorityQueue.offer(hotTagDTO);
+                    }
+                }
+            });
+            hotTags.add(hotTags.size(), priorityQueue.peek());
+            map.remove(priorityQueue.peek().getTag());
+        }
+        return hotTags;
+    }
+
+
 }

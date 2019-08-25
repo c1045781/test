@@ -35,6 +35,7 @@ public class SessionInterception implements HandlerInterceptor {
                     UserExample example = new UserExample();
                     example.createCriteria().andTokenEqualTo(token);
                     List<User> users = userMapper.selectByExample(example);
+
                     if (users.size() > 0) {
                         request.getSession().setAttribute("user", users.get(0));
                         int unreadCount = notificationService.unreadCount(users.get(0).getId());

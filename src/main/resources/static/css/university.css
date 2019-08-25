@@ -23,6 +23,10 @@ body {
     padding-top: 10px;
 }
 
+.media-body a{
+    text-decoration: none;
+}
+
 .comment-div {
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;

@@ -18,7 +18,7 @@ public class HotTagSchedule {
     @Autowired
     private QuestionService questionService;
 
-    @Scheduled(cron = "* * 0/8 * * *")
+    @Scheduled(cron = "0 0 */8 * * *")
     public void hotTag() {
         hotTags = questionService.findHotTag();
     }

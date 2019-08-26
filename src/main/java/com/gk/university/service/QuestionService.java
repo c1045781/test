@@ -171,24 +171,27 @@ public class QuestionService {
 
 
         List<HotTagDTO> hotTags = new ArrayList<>();
-        for (int i = 0; i <= 4; i++) {
-            PriorityQueue<HotTagDTO> priorityQueue = new PriorityQueue<>();
-            map.forEach((key, value) -> {
-                HotTagDTO hotTagDTO = new HotTagDTO();
-                hotTagDTO.setTag(key);
-                hotTagDTO.setCount(value);
-                if (priorityQueue.size() < 10) {
+        PriorityQueue<HotTagDTO> priorityQueue = new PriorityQueue<>();
+        map.forEach((key, value) -> {
+            HotTagDTO hotTagDTO = new HotTagDTO();
+            hotTagDTO.setTag(key);
+            hotTagDTO.setCount(value);
+            if (priorityQueue.size() < 10) {
+                priorityQueue.offer(hotTagDTO);
+            } else {
+                HotTagDTO poll = priorityQueue.peek();
+                if (hotTagDTO.compareTo(poll) > 0) {
+                    priorityQueue.poll();
                     priorityQueue.offer(hotTagDTO);
-                } else {
-                    HotTagDTO poll = priorityQueue.peek();
-                    if (hotTagDTO.compareTo(poll) < 0) {
-                        priorityQueue.poll();
-                        priorityQueue.offer(hotTagDTO);
-                    }
                 }
-            });
-            hotTags.add(hotTags.size(), priorityQueue.peek());
-            map.remove(priorityQueue.peek().getTag());
+            }
+        });
+
+        Iterator<HotTagDTO> iterator = priorityQueue.iterator();
+        while (iterator.hasNext()) {
+            if (priorityQueue.size() > 0) {
+                hotTags.add(0, priorityQueue.poll());
+            }
         }
         return hotTags;
     }

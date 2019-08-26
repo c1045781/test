@@ -9,13 +9,11 @@ public class HotTagDTO implements Comparable<HotTagDTO> {
     private Integer count;
 
 
-
     @Override
     public int compareTo(@NotNull HotTagDTO o) {
         if (this.getCount() - o.getCount() == 0) {
-            return o.getTag().length() - this.getTag().length();
+            return this.getTag().length() - o.getTag().length();
         }
-        int i = o.getCount() - this.getCount();
-        return i;
+        return this.getCount() - o.getCount();
     }
 }

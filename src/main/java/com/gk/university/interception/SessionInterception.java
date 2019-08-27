@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Service
@@ -37,13 +38,15 @@ public class SessionInterception implements HandlerInterceptor {
                     List<User> users = userMapper.selectByExample(example);
 
                     if (users.size() > 0) {
-                        request.getSession().setAttribute("user", users.get(0));
+                        HttpSession session = request.getSession();
+                        session.setMaxInactiveInterval(60*60*24*30);
+                        session.setAttribute("user", users.get(0));
                         int unreadCount = notificationService.unreadCount(users.get(0).getId());
-                        request.getSession().setAttribute("unreadCount",unreadCount);
+                        session.setAttribute("unreadCount",unreadCount);
                         QuestionExample example1 = new QuestionExample();
                         example1.createCriteria().andCreatorEqualTo(users.get(0).getId());
                         Integer questionCount = (int) questionMapper.countByExample(example1);
-                        request.getSession().setAttribute("questionCount",questionCount);
+                        session.setAttribute("questionCount",questionCount);
                     }
                     break;
                 }

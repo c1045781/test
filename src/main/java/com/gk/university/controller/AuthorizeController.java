@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
+import java.util.logging.SimpleFormatter;
 
 @Controller
 public class AuthorizeController {
@@ -37,16 +40,20 @@ public class AuthorizeController {
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
                            HttpServletResponse response) {
+        System.out.println("开始登录" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()));
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clientSecret);
         accessTokenDTO.setCode(code);
         accessTokenDTO.setRedirect_uri(redirectUri);
         accessTokenDTO.setState(state);
+        System.out.println("开始获取token" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()));
         // 从github获取accessToken
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         // 从github获取用户信息
+        System.out.println("获取token，开始获取user" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()));
         GithubUser githubUser = githubProvider.getGithubUser(accessToken);
+        System.out.println("获取user" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()));
         if (githubUser != null) {
             // 登录成功
             User user = new User();
@@ -57,6 +64,7 @@ public class AuthorizeController {
             user.setToken(token);
             userService.insertOrUpdate(user);
             response.addCookie(new Cookie("token", token));
+            System.out.println("完成登录" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date().getTime()));
             return "redirect:/";
         } else {
             //登录失败

@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @Data
 public class HotTagSchedule {
-    List<HotTagDTO> hotTags;
+    private List<HotTagDTO> hotTags;
     @Autowired
     private QuestionService questionService;
 
@@ -22,4 +22,5 @@ public class HotTagSchedule {
     public void hotTag() {
         hotTags = questionService.findHotTag();
     }
+
 }

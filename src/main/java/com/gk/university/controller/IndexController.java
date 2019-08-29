@@ -1,6 +1,5 @@
 package com.gk.university.controller;
 
-import com.gk.university.cache.HotTagCache;
 import com.gk.university.dto.HotTagDTO;
 import com.gk.university.dto.PaginationDTO;
 import com.gk.university.schedule.HotTagSchedule;

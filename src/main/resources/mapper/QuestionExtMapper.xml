@@ -39,12 +39,12 @@
     <select id="countQuestionBySearch" parameterType="com.gk.university.model.Question" resultType="Integer">
         select count(*) from question
         <where>
-            <if test="search != null">
+            <if test="search != null and search != ''">
                 and title REGEXP #{search}
             </if>
 
-            <if test="tag != null">
-                and tag REGEXP #{tag}
+            <if test="tag != null and tag != ''">
+                and find_in_set(#{tag},tag)
             </if>
         </where>
 
@@ -54,12 +54,12 @@
             resultMap="BaseResultMap">
         select * from question
         <where>
-            <if test="search != null">
+            <if test="search != null and search != ''">
                 and title REGEXP #{search}
             </if>
 
-            <if test="tag != null">
-                and tag REGEXP #{tag}
+            <if test="tag != null and tag != ''">
+                and find_in_set(#{tag},tag)
             </if>
         </where>
         order by gmt_create desc limit #{index},#{size}

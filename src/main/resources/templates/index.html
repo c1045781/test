@@ -102,12 +102,12 @@
             <!--</ul>-->
             <div th:each="hotTag:${hotTags}">
                 <div class="media-body">
-                    <a th:href="@{/(search=${search},tag=${hotTag.tag})}">
-                        <h4 class="media-heading">
+                    <h4 class="media-heading">
+                        <a th:href="@{/(search=${search},tag=${hotTag.tag})}">
                             <span class="label label-info" name="tag" id="tag"  th:text="${hotTag.tag}">Info</span>
-                        </h4>
-                        <span class="text-decription"><span th:text="${hotTag.count}"></span> 个问题</span>
-                    </a>
+                        </a>
+                    </h4>
+                    <span class="text-decription"><span th:text="${hotTag.count}"></span> 个问题</span>
                 </div>
             </div>
         </div>

@@ -162,9 +162,9 @@ public class QuestionService {
             for (String tag : splits) {
                 Integer count = map.get(tag);
                 if (count != null) {
-                    map.put(tag, count + 5 + question.getCommentCount());
+                    map.put(tag, count + 1);
                 } else {
-                    map.put(tag, 5 + question.getCommentCount());
+                    map.put(tag, 1);
                 }
             }
         }
@@ -176,7 +176,7 @@ public class QuestionService {
             HotTagDTO hotTagDTO = new HotTagDTO();
             hotTagDTO.setTag(key);
             hotTagDTO.setCount(value);
-            if (priorityQueue.size() < 10) {
+            if (priorityQueue.size() < 5) {
                 priorityQueue.offer(hotTagDTO);
             } else {
                 HotTagDTO poll = priorityQueue.peek();

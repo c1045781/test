@@ -124,6 +124,9 @@ public class QuestionService {
         Question dbQuestion = questionMapper.selectByPrimaryKey(question.getId());
         if (dbQuestion == null) {
             //插入
+            question.setViewCount(0);
+            question.setLikeCount(0);
+            question.setCommentCount(0);
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
             questionMapper.insert(question);

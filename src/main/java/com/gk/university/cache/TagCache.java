@@ -38,8 +38,8 @@ public class TagCache {
         tagDTOS.add(tool);
 
         TagDTO internet = new TagDTO();
-        tool.setCategoryName("网络服务");
-        tool.setTags(Arrays.asList("TCP/IP"));
+        internet.setCategoryName("网络服务");
+        internet.setTags(Arrays.asList("TCP/IP"));
         tagDTOS.add(internet);
         return tagDTOS;
     }

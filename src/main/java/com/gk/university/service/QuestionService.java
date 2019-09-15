@@ -155,7 +155,7 @@ public class QuestionService {
 
     public List<HotTagDTO> findHotTag() {
         QuestionExample example = new QuestionExample();
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(0, 5));
+        List<Question> questionList = questionMapper.selectByExample(example);
         Map<String, Integer> map = new HashMap<>();
         for (Question question : questionList) {
             String[] splits = question.getTag().split(",");

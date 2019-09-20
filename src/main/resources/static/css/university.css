@@ -24,7 +24,7 @@ body {
     padding-top: 10px;
 }
 
-.media-body a{
+.media-body a {
     text-decoration: none;
 }
 
@@ -98,13 +98,18 @@ body {
 .tab-content {
     margin-top: 5px;
 }
-.tab-content .label-info{
+
+.tab-content .label-info {
     white-space: normal;
     margin: 7px;
     display: inline-block
 }
+
 .tag-div {
     margin-bottom: 15px;
 }
-.divcss{margin:0 auto;
-    text-align:center;}
+
+.divcss {
+    margin: 0 auto;
+    text-align: center;
+}

@@ -1,5 +1,6 @@
 body {
     background-color: #efefef;
+
 }
 
 .main {
@@ -105,3 +106,5 @@ body {
 .tag-div {
     margin-bottom: 15px;
 }
+.divcss{margin:0 auto;
+    text-align:center;}

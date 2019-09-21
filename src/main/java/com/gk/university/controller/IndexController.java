@@ -24,7 +24,7 @@ public class IndexController {
     @GetMapping("/")
     public String hello(Model model,
                         @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
-                        @RequestParam(value = "size", defaultValue = "5") Integer size,
+                        @RequestParam(value = "size", defaultValue = "10") Integer size,
                         @RequestParam(value = "search" ,required = false)String search ,
                         @RequestParam(value = "tag" ,required = false)String tag) {
 

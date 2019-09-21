@@ -1,6 +1,6 @@
 body {
     background-color: #efefef;
-
+    height: 100%;
 }
 
 .main {
@@ -112,4 +112,13 @@ body {
 .divcss {
     margin: 0 auto;
     text-align: center;
+    bottom: 0px;
+}
+
+.media{
+    margin-top: 20px;
+}
+
+.media-left{
+    padding: 10px;
 }

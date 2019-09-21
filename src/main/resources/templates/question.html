@@ -19,7 +19,7 @@
 <div th:insert="~{navigation :: nav}"></div>
 <div class="container-fluid main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
             <h2 th:text="${question.title}"></h2>
             <span class="text-decription question-text">
                         作者：<span th:text="${question.user.name}"></span> |
@@ -94,7 +94,7 @@
             <input type="hidden" id="question_id" th:value="${question.id}">
             <button type="submit" class="btn btn-success btn-publish" onclick="post()">回复</button>
         </div>
-        <div class="col-lg-3  col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-3  col-md-3 col-sm-3 col-xs-3">
             <h4>发起人</h4>
             <div class="media">
                 <div class="media-left">

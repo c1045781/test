@@ -46,7 +46,7 @@
             <a th:href="@{'/publish/'+${question.id}}"
                th:if="${session.user != null && session.user.id == question.creator}"><span
                     class="glyphicon glyphicon-pencil" aria-hidden="true">编辑</span></a>
-            <hr>
+            <!--<hr>
 
             <h4>
                 <span th:text="${question.commentCount}"></span>个回复
@@ -92,7 +92,7 @@
             </div>
             <textarea class="form-control text-area" rows="6" id="comment_content"></textarea>
             <input type="hidden" id="question_id" th:value="${question.id}">
-            <button type="submit" class="btn btn-success btn-publish" onclick="post()">回复</button>
+            <button type="submit" class="btn btn-success btn-publish" onclick="post()">回复</button>-->
         </div>
         <div class="col-lg-3  col-md-3 col-sm-3 col-xs-3">
             <h4>发起人</h4>

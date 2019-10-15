@@ -38,16 +38,14 @@ public class ProfileController {
             model.addAttribute("sectionName", "我的提问");
             PaginationDTO paginationDTO = questionService.findPaginationById(user.getId(), currentPage, size);
             model.addAttribute("pagination", paginationDTO);
-        } else if ("reply".equals(action)) {
+        } /*else if ("reply".equals(action)) {
             PaginationDTO paginationDTO = notificationService.findPaginationById(user.getId(), currentPage, size);
             int unreadCount = notificationService.unreadCount(user.getId());
             model.addAttribute("pagination",paginationDTO);
             model.addAttribute("section", "reply");
             model.addAttribute("sectionName", "最新回复");
             model.addAttribute("unreadCount",unreadCount);
-        }
-
-
+        }*/
         return "profile";
     }
 }

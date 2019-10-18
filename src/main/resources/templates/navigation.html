@@ -19,7 +19,7 @@
                 </form>
                 <ul class="nav navbar-nav navbar-right">
                     <li th:if="${session.user == null}">
-                        <a th:href="@{https://github.com/login/oauth/authorize/(client_id='d87b2b59752a3f484ac6' , scope='user',redirect_uri='http://qiyoung.top/callback',state=1)}">登录</a>
+                        <a th:href="@{https://github.com/login/oauth/authorize/(client_id='d87b2b59752a3f484ac6' , scope='user',redirect_uri='http://114.55.147.32/callback',state=1)}">登录</a>
                         <!--<a th:href="@{https://github.com/login/oauth/authorize/(client_id='17487c6e851e9da4757f' , scope='user',redirect_uri='http://localhost:8080/callback',state=1)}">登录</a>-->
                     </li>
                     <li class="dropdown" th:if="${session.user != null }">

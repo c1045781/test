@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
-    /*@Autowired
+    @Autowired
     private CommentMapper commentMapper;
     @Autowired
     private QuestionMapper questionMapper;
@@ -115,5 +115,5 @@ public class CommentService {
         }).collect(Collectors.toList());
 
         return commentDTOs;
-    }*/
+    }
 }

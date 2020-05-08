@@ -19,7 +19,7 @@ import java.util.List;
 @Controller
 public class CommentController {
 
-   /* @Autowired
+    @Autowired
     private CommentService commentService;
 
     @ResponseBody
@@ -52,5 +52,5 @@ public class CommentController {
     public ResultDTO <List<CommentDTO>> comments(@PathVariable(name = "id")Long id){
         List<CommentDTO> comments = commentService.findCommentById(id, CommentTypeEnum.COMMENT);
         return ResultDTO.okOf(comments);
-    }*/
+    }
 }
